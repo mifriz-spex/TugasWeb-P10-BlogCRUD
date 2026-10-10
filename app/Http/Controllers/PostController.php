@@ -8,11 +8,17 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     // 1. index
-    public function index()
+    public function index(Request $request)
     {
-        // Syarat #8: Pagination
         $posts = Post::latest()->paginate(5);
-        return view('posts.index', compact('posts'));
+        
+        // Fitur Inline Edit: Deteksi kalau ada parameter edit
+        $post_edit = null;
+        if ($request->has('edit')) {
+            $post_edit = Post::find($request->edit);
+        }
+
+        return view('posts.index', compact('posts', 'post_edit'));
     }
 
     // 2. create
