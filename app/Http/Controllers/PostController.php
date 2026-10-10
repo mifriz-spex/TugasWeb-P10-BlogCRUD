@@ -7,59 +7,68 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // 1. index
     public function index()
     {
-        //
+        // Syarat #8: Pagination
+        $posts = Post::latest()->paginate(5);
+        return view('posts.index', compact('posts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // 2. create
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // 3. store
     public function store(Request $request)
     {
-        //
+        // Syarat #5: Validasi
+        $validated = $request->validate([
+            'title' => 'required|max:200',
+            'body' => 'required',
+        ]);
+
+        Post::create($validated);
+
+        // Syarat #6: Flash message sukses
+        return redirect()->route('posts.index')->with('success', 'Post berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // 4. show (Syarat #8: Route Model Binding)
     public function show(Post $post)
     {
-        //
+        return view('posts.show', compact('post'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    // 5. edit (Syarat #8: Route Model Binding)
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // 6. update
     public function update(Request $request, Post $post)
     {
-        //
+        // Syarat #5: Validasi
+        $validated = $request->validate([
+            'title' => 'required|max:200',
+            'body' => 'required',
+        ]);
+
+        $post->update($validated);
+
+        // Syarat #6: Flash message sukses
+        return redirect()->route('posts.index')->with('success', 'Post berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // 7. destroy
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+
+        // Syarat #6: Flash message sukses
+        return redirect()->route('posts.index')->with('success', 'Post berhasil dihapus!');
     }
 }
